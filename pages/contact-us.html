@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Stock Dashboard - Home</title>
+    <title>Stock Dashboard - Contact Us</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -92,12 +92,18 @@
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small"
+                            <input type="text" class="form-control bg-light border-0 small" id="searchInput"
                                 placeholder="Search a stock..." aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
+                            </div>
+                        </div>
+                        <!-- Use Bootstrap's dropdown component for the autocomplete list -->
+                        <div class="dropdown" id="autocompleteContainer">
+                            <div class="dropdown-menu" aria-labelledby="searchInput" id="autocompleteList">
+                                <!-- Suggestions will be dynamically added here -->
                             </div>
                         </div>
                     </form>
@@ -118,11 +124,17 @@
                                     <div class="input-group">
                                         <input type="text" class="form-control bg-light border-0 small"
                                             placeholder="Search a stock..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
+                                            aria-describedby="basic-addon2" id="searchInput2">
                                         <div class="input-group-append">
                                             <button class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
+                                        </div>
+                                    </div>
+                                    <!-- Use Bootstrap's dropdown component for the autocomplete list -->
+                                    <div class="dropdown" id="autocompleteContainer">
+                                        <div class="dropdown-menu" aria-labelledby="searchInput2" id="autocompleteList">
+                                            <!-- Suggestions will be dynamically added here -->
                                         </div>
                                     </div>
                                 </form>
@@ -163,102 +175,55 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="container-xl px-4 mt-4">
 
-                    <!-- Content Row -->
                     <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="col-xl-10">
+                            <!-- Account details card-->
+                            <div class="card mb-4">
+                                <div class="card-header">Contact Us</div>
                                 <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Symbol: TSLA</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Tesla, Inc.</div>
+                                    <form>
+                                        <!-- Form Row-->
+                                        <div class="row gx-3 mb-3">
+                                            <!-- Form Group (first name)-->
+                                            <div class="col-md-6">
+                                                <label class="small mb-1" for="inputFirstName">First name *</label>
+                                                <input class="form-control" id="inputFirstName" type="text"
+                                                    placeholder="Enter your first name">
+                                            </div>
+                                            <!-- Form Group (last name)-->
+                                            <div class="col-md-6">
+                                                <label class="small mb-1" for="inputLastName">Last name *</label>
+                                                <input class="form-control" id="inputLastName" type="text"
+                                                    placeholder="Enter your last name">
+                                            </div>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-info fa-2x text-gray-300"></i>
+                                        <!-- Form Group (email address)-->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="inputEmailAddress">Email address *</label>
+                                            <input class="form-control" id="inputEmailAddress" type="email"
+                                                placeholder="Enter your email address">
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                                        <!-- Form Group (Subject)-->
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="inputSubject">Subject *</label>
+                                            <select class="form-select" id="subject" name="subject">
+                                                <option value="" disabled selected>Select a subject</option>
+                                                <option value="support">Support</option>
+                                                <option value="sales">Sales</option>
+                                                <option value="feedback">Feedback</option>
+                                            </select>
+                                        </div>
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                Price</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$244.40</div>
+                                        <div class="mb-3">
+                                            <label class="small mb-1" for="inputMessage">Message *</label>
+                                            <textarea class="lh-base form-control" type="text"
+                                                placeholder="Enter your message..." rows="4"></textarea>
                                         </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Change $</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">+$9.54</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-plus fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Change %</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">+4.06%</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-percentage fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Stock Information -->
-                    <div class="row">
-
-                        <!-- Area Chart -->
-                        <div class="col-xl-12 col-lg-12">
-
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Chart</h6>
-                                </div>
-
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
+                                        <!-- Submit button-->
+                                        <button class="btn btn-primary w-100" type="button">Submit</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -325,6 +290,73 @@
 
     <script src="js/demo/chart-area-demo.js"></script>
 
+    <script>
+        $(document).ready(function () {
+            const searchInput = $('#searchInput');
+            const searchInput2 = $('#searchInput2');
+
+            // Event listener for user input
+            searchInput.on('input', handleInput);
+            searchInput2.on('input', handleInput);
+
+            // Handle user input
+            function handleInput() {
+                const keyword = searchInput.val();
+                if (keyword.length > 2) {
+                    fetchSuggestions(keyword);
+                } else {
+                    // Clear the autocomplete list if the input is empty
+                    $('#autocompleteList').empty();
+                    $('#autocompleteList').dropdown('dispose');
+                }
+            }
+
+            // Fetch autocomplete suggestions from the API
+            function fetchSuggestions(keyword) {
+                const apiUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${keyword}&apikey=RD2KTXLLT0Q229Z8`;
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        //console.log(data.bestMatches);
+                        displaySuggestions(data.bestMatches);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+            }
+
+            // Display autocomplete suggestions
+            function displaySuggestions(suggestions) {
+                const autocompleteList = $('#autocompleteList');
+                autocompleteList.empty();
+
+                suggestions.forEach(suggestion => {
+                    const symbol = suggestion["1. symbol"];
+                    var name = suggestion["2. name"];
+                    const region = suggestion["4. region"];
+
+                    if (name.length > 30)
+                        name = name.substring(0, 30) + "...";
+
+                    if (region != "United States")
+                        return;
+
+                    const listItem = $('<a>').addClass('dropdown-item').html(name + " <b>SYM: " + symbol + "</b>");
+                    listItem.on('click', function () {
+                        searchInput.val(symbol);
+                        autocompleteList.empty();
+                        autocompleteList.dropdown('toggle');
+                    });
+                    autocompleteList.append(listItem);
+                });
+
+                autocompleteList.dropdown('toggle');
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -4,7 +4,7 @@ var bodyParser = require('body-parser') //parse request parameters
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://itshakgal:itshakgal2023@stockdash.fvzw1ma.mongodb.net/";
 
-
+// API KEY RD2KTXLLT0Q229Z8
 var app = express();
 var port = 5000;
 
@@ -78,6 +78,10 @@ app.post('/sign-in', async function (req, res) {
 
 app.get('/sign-up', function (req, res) {
   res.sendFile(path.join(__dirname + '/pages/register.html'));
+})
+
+app.get('/contact-us', function (req, res) {
+  res.sendFile(path.join(__dirname + '/pages/contact-us.html'));
 })
 
 app.listen(port);
