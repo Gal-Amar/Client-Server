@@ -38,9 +38,10 @@ var transport = nodemailer.createTransport({
 
 // each session contains the username of the user and the time at which it expires
 class Session {
-  constructor(username, expiresAt) {
+  constructor(username, expiresAt, rememberMe) {
     this.username = username
     this.expiresAt = expiresAt
+    this.rememberMe = this.rememberMe
   }
 
   // we'll use this method later to determine if the session has expired
@@ -83,7 +84,7 @@ const welcomeHandler = (req, res) => {
   // if the session has expired, return an unauthorized error, and delete the 
   // session from our map
  
-  refreshSession(res, userSession.username);
+  refreshSession(res, userSession.username, false);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
   // send a welcome message
@@ -91,16 +92,22 @@ const welcomeHandler = (req, res) => {
   return userSession.username;
 }
 
-const refreshSession = (res, userEmail) => {
+const refreshSession = (res, userEmail, rememberMe) => {
   // generate a random UUID as the session token
   const sessionToken = uuid.v4()
 
   // set the expiry time as 120s after the current time
   const now = new Date()
-  const expiresAt = new Date(+now + 120 * 1000)
+  var expiresAt 
 
+  if(rememberMe == true){
+    expiresAt = new Date(+now + 604800000) // week
+  }else{
+    expiresAt = new Date(+now + 120 * 1000) //two minutes 
+  }
+  
   // create a session containing information about the user and expiry time
-  const session = new Session(userEmail, expiresAt)
+  const session = new Session(userEmail, expiresAt ,rememberMe)
   // add the session information to the sessions map
   sessions[sessionToken] = session
   
@@ -168,9 +175,9 @@ app.post('/sign-in', async function (req, res) {
       console.log("not equal");
       return res.status(401).json({ "error": "INCORRECT_PASSWORD" });
     }
-
-    refreshSession(res, req.body.email);
-   
+    
+      refreshSession(res, req.body.email, req.body.rememberMe);
+    
     res.redirect('/')
   } finally {
     await client.close();
@@ -203,8 +210,9 @@ app.post('/sign-up', async function (req, res) {
       favorites:  [],
     });
     console.log("accepted")
-    mailHandler('',req.body.email)
-    refreshSession(res, req.body.email);
+    const message = "Hi, " + req.body.firstName + " " + req.body.lastName + "\nWelcome to StockDashboard!"
+    mailHandler("Welcome!",message,req.body.email)
+    refreshSession(res, req.body.email, false);
     res.redirect('/')
   } finally {
     await client.close();
@@ -266,20 +274,30 @@ app.get('/favorites', favoritesHandler = async (req, res) => {
 //   res.sendFile(path.join(__dirname + '/pages/contact.html'));
 // })
 
-const mailHandler = (message, mailTo) =>{
+app.post('/contact-us', function (req, res) {
+  const message = "Hi " + req.body.firstName + " " + req.body.firstName + "\n\nWe have received your inquiry about " + req.body.subject + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"
+  const subject = "Inquiry Received!"
+
+  if( mailHandler(subject,message,req.body.email) ){
+    res.status(200)
+  } 
+  return res.status(500)
+})
+
+const mailHandler = (subject,message, mailTo) =>{
   var mailOptions = {
     from: 'itshak.gal@gmail.com',
     to: mailTo,
-    subject: 'welcome!',
-    text: 'Welcome to Stock Dashboard!' //later = message
+    subject: subject,
+    text: message 
     
   };
   
   transport.sendMail(mailOptions, (error, info) => {
     if (error) {
-      return console.log(error);
+      return 0;
     }
-    console.log('Email sent: ' + info.response);
+    return 1;
   });
 }
 app.listen(port);
