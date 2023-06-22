@@ -2,6 +2,7 @@ function validateSignIn() {
    // Get input values
    var email = document.getElementById('signinEmail').value.trim();
    var password = document.getElementById('signinPassword').value.trim();
+   
 
    // Regular expressions for validation
    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,30 +45,32 @@ let signinForm = document.getElementById('signinForm');
 signinForm.addEventListener('submit', (e) => {
    e.preventDefault();
 
-
    if (validateSignIn()) {
       // Get input values
       var email = document.getElementById('signinEmail').value.trim();
       var password = document.getElementById('signinPassword').value.trim();
+      var checkbox = document.querySelector('#customCheck');
+      var rememberMe
+      
+      if (checkbox.checked){
+        rememberMe = true;
+      }
+      else rememberMe = false;
 
-      //  $.ajax({
-      //      type: "POST",
-      //      url: "/sign-in",
-      //      data: {
-      //          'username': email,
-      //          'password': password
-      //      },
-      //      success: function(res) {
-      //          if (res.result == 'redirect') {
-      //              //redirecting to main page from here.
-      //              window.location.replace(res.url);
-      //          }
-      //      },
-      //      error: function(xhr, status, error) {
-      //          var serverLoginResponse = document.getElementById("server-login-response");
-      //          serverLoginResponse.innerText = xhr.responseText;
-      //      }
-      //    });
-
+       $.ajax({
+           type: "POST",
+           url: "/sign-in",
+           data: {
+               'email': email,
+               'password': password,
+               'rememberMe': rememberMe
+           },
+           success: function(res) {
+             window.location.href = '/';
+           },
+           error: function(xhr, status, error) {
+              console.error('Server error:', status);
+           }
+         });
    }
 });

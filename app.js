@@ -41,7 +41,7 @@ class Session {
   constructor(username, expiresAt, rememberMe) {
     this.username = username
     this.expiresAt = expiresAt
-    this.rememberMe = this.rememberMe
+    this.rememberMe = rememberMe
   }
 
   // we'll use this method later to determine if the session has expired
@@ -83,12 +83,12 @@ const welcomeHandler = (req, res) => {
   }
   // if the session has expired, return an unauthorized error, and delete the 
   // session from our map
- 
-  refreshSession(res, userSession.username, false);
+  console.log('in welcome ' + userSession.rememberMe)
+  refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
   // send a welcome message
-  console.log('in welcome ' + userSession.username)
+  
   return userSession.username;
 }
 
@@ -99,11 +99,12 @@ const refreshSession = (res, userEmail, rememberMe) => {
   // set the expiry time as 120s after the current time
   const now = new Date()
   var expiresAt 
-
-  if(rememberMe == true){
+  console.log("in refresh sess " + typeof rememberMe)
+  if(rememberMe == "true"){
     expiresAt = new Date(+now + 604800000) // week
+    console.log(expiresAt)
   }else{
-    expiresAt = new Date(+now + 120 * 1000) //two minutes 
+    expiresAt = new Date(+now + 120 * 4000) //two minutes 
   }
   
   // create a session containing information about the user and expiry time
@@ -128,8 +129,9 @@ app.get('/', function (req, res) {
     res.redirect('/sign-in')
     return
   }
-  res.sendFile(path.join(__dirname + '/pages/index.html'));
+  res.sendFile(path.join(__dirname + '/pages/stock.html'));
   return validClient
+  
 })
 
 
@@ -154,18 +156,22 @@ app.get('/', function (req, res) {
 
 
 app.get('/sign-in', function (req, res) {
-  res.sendFile(path.join(__dirname + '/pages/login.html'));
+  if(welcomeHandler(req,res) =='no-user')
+    res.sendFile(path.join(__dirname + '/pages/login.html'));
+  else
+    res.sendFile(path.join(__dirname + '/pages/stock.html'));
 })
 
 app.post('/sign-in', async function (req, res) {
   if (req.body.email == "" || req.body.password == "") {
     return res.status(401).json({ "error": "EMPTY_EMAIL_OR_PASSWORD" });
   }
-
+  console.log(req.body.email)
   try {
     await client.connect();
     const query = { email: req.body.email }
     const user = await users.findOne(query);
+    
     if (user == null) {
       return res.status(401).json({ "error": "USER_DOES_NOT_EXISTS" });
     }
@@ -176,17 +182,20 @@ app.post('/sign-in', async function (req, res) {
       return res.status(401).json({ "error": "INCORRECT_PASSWORD" });
     }
     
-      refreshSession(res, req.body.email, req.body.rememberMe);
-    
-    res.redirect('/')
+    refreshSession(res, req.body.email, req.body.rememberMe);
+    res.end()
   } finally {
     await client.close();
   }
 })
 
 app.get('/sign-up', function (req, res) {
-  res.sendFile(path.join(__dirname + '/pages/register.html'));
+  if(welcomeHandler(req,res) =='no-user')
+    res.sendFile(path.join(__dirname + '/pages/register.html'));
+  else
+    res.sendFile(path.join(__dirname + '/pages/stock.html'));
 })
+
 app.post('/sign-up', async function (req, res) {
   if (req.body.email == "" || req.body.password == "" || req.body.lastName == "" || req.body.firstName == "" || req.body.repeatedPassword == "") {
     return res.status(401).json({ "error": "EMPTY_EMAIL_OR_PASSWORD" });
@@ -213,29 +222,33 @@ app.post('/sign-up', async function (req, res) {
     const message = "Hi, " + req.body.firstName + " " + req.body.lastName + "\nWelcome to StockDashboard!"
     mailHandler("Welcome!",message,req.body.email)
     refreshSession(res, req.body.email, false);
-    res.redirect('/')
+    res.end()
   } finally {
     await client.close();
   }
 })
 
 app.get('/logout', logoutHandler = (req, res) => {
-  if (!req.cookies) {
-    res.redirect('/sign-in')
-    return
-}
+  if(welcomeHandler(req,res) =='no-user')
+    res.sendFile(path.join(__dirname + '/pages/register.html'));
+  else
+    res.sendFile(path.join(__dirname + '/pages/stock.html'));
+  //   if (!req.cookies) {
+  //     res.redirect('/sign-in')
+  //     return
+  // }
 
-const sessionToken = req.cookies['session_token']
-if (!sessionToken) {
-    res.redirect('/sign-in')
-    return
-}
+  const sessionToken = req.cookies['session_token']
+  if (!sessionToken) {
+      res.redirect('/sign-in')
+      return
+  }
 
-delete sessions[sessionToken]
+  delete sessions[sessionToken]
 
-res.cookie("session_token", "", { expires: new Date() })
-res.end()
-res.redirect('/sign-in')
+  res.cookie("session_token", "", { expires: new Date() })
+  res.end()
+  res.redirect('/sign-in')
 })
 
 
@@ -270,9 +283,12 @@ app.get('/favorites', favoritesHandler = async (req, res) => {
   }
 });
 
-// app.get('/contact-us', function (req, res) {
-//   res.sendFile(path.join(__dirname + '/pages/contact.html'));
-// })
+app.get('/contact-us', function (req, res) {
+  if(welcomeHandler(req,res) =='no-user')
+    res.sendFile(path.join(__dirname + '/pages/login.html'));
+  else
+    res.sendFile(path.join(__dirname + '/pages/contact-us.html'));
+})
 
 app.post('/contact-us', function (req, res) {
   const message = "Hi " + req.body.firstName + " " + req.body.firstName + "\n\nWe have received your inquiry about " + req.body.subject + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"

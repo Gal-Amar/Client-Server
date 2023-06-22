@@ -32,7 +32,7 @@ function validateSignUp() {
         firstNameError.innerHTML = '';
         firstNameValid = true;
     }
-
+    
     // Validate lastName input
     if (lastName === '') {
         lastNameError.innerHTML = 'Please enter your last name.';
@@ -40,9 +40,9 @@ function validateSignUp() {
         lastNameError.innerHTML = 'Please enter letters only.';
     } else {
         lastNameError.innerHTML = '';
-        lastNameError = true;
+        lastNameValid = true;
     }
-
+    
     // Validate email input
     if (email === '') {
         emailError.innerHTML = 'Please enter your email address.';
@@ -77,7 +77,7 @@ function validateSignUp() {
         passwordError.innerHTML = '';
         passwordValid = true;
     }
-
+    console.log(firstNameValid && lastNameValid && emailValid && passwordValid && repeatPasswordValid)
 
     // If all inputs are valid
     return firstNameValid && lastNameValid && emailValid && passwordValid && repeatPasswordValid;
@@ -95,25 +95,26 @@ signupForm.addEventListener('submit', (e) => {
         var email = document.getElementById('signupEmail').value.trim();
         var password = document.getElementById('signupPassword').value.trim();
         var repeatPassword = document.getElementById('signupRepeatPassword').value.trim();
-
-        //  $.ajax({
-        //      type: "POST",
-        //      url: "/sign-in",
-        //      data: {
-        //          'username': email,
-        //          'password': password
-        //      },
-        //      success: function(res) {
-        //          if (res.result == 'redirect') {
-        //              //redirecting to main page from here.
-        //              window.location.replace(res.url);
-        //          }
-        //      },
-        //      error: function(xhr, status, error) {
-        //          var serverLoginResponse = document.getElementById("server-login-response");
-        //          serverLoginResponse.innerText = xhr.responseText;
-        //      }
-        //    });
+        console.log("hi")
+         $.ajax({
+             type: "POST",
+             url: "/sign-up",
+             data: {
+                 "firstName": firstName,
+                 "lastName": lastName,
+                 "email": email,
+                 "password":password,
+                 "repeatedPassword": repeatPassword
+             },
+             success: function(res) {
+                     window.location.href = '/';
+                 
+             },
+             error: function(xhr, status, error) {
+                 //var serverLoginResponse = document.getElementById("server-login-response");
+                 serverLoginResponse.innerText = xhr.responseText;
+             }
+           });
 
     }
 });
