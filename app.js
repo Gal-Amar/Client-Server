@@ -1,7 +1,6 @@
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser') //parse request parameters
-const axios = require('axios');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bcrypt = require('bcrypt');
 const uri = "mongodb+srv://itshakgal:itshakgal2023@stockdash.fvzw1ma.mongodb.net/";
@@ -67,8 +66,6 @@ const welcomeHandler = (req, res) => {
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
       // If the cookie is not set, return an unauthorized status
-      // res.status(401).end()
-      // return
       return 'no-user'
   }
 
@@ -77,17 +74,13 @@ const welcomeHandler = (req, res) => {
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
       // // If the session token is not present in session map, return an unauthorized error
-      // res.status(401).end()
-      // return
       return 'no-user'
   }
   // if the session has expired, return an unauthorized error, and delete the 
   // session from our map
-  console.log('in welcome ' + userSession.rememberMe)
   refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
-  // send a welcome message
   
   return userSession.username;
 }
@@ -99,10 +92,8 @@ const refreshSession = (res, userEmail, rememberMe) => {
   // set the expiry time as 120s after the current time
   const now = new Date()
   var expiresAt 
-  console.log("in refresh sess " + typeof rememberMe)
   if(rememberMe == "true"){
     expiresAt = new Date(+now + 604800000) // week
-    console.log(expiresAt)
   }else{
     expiresAt = new Date(+now + 120 * 4000) //two minutes 
   }
@@ -135,25 +126,6 @@ app.get('/', function (req, res) {
 })
 
 
-// app.post('/', async function (req, res) {
-//   const options = {
-//     method: 'GET',
-//     url: 'https://ms-finance.p.rapidapi.com/market/v2/auto-complete',
-//     params: { q: 'tesla' },
-//     headers: {
-//       'X-RapidAPI-Key': '4f24578c82msh3960a1fefed24f5p161ec4jsn7a73d210651b',
-//       'X-RapidAPI-Host': 'ms-finance.p.rapidapi.com'
-//     }
-//   };
-
-//   try {
-//     const response = await axios.request(options);
-//     console.log(response.data);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// })
-
 
 app.get('/sign-in', function (req, res) {
   if(welcomeHandler(req,res) =='no-user')
@@ -166,7 +138,6 @@ app.post('/sign-in', async function (req, res) {
   if (req.body.email == "" || req.body.password == "") {
     return res.status(401).json({ "error": "EMPTY_EMAIL_OR_PASSWORD" });
   }
-  console.log(req.body.email)
   try {
     await client.connect();
     const query = { email: req.body.email }
@@ -175,8 +146,6 @@ app.post('/sign-in', async function (req, res) {
     if (user == null) {
       return res.status(401).json({ "error": "USER_DOES_NOT_EXISTS" });
     }
-    console.log(req.body.password)
-    console.log(user)
     if (!bcrypt.compareSync(req.body.password, user.password)) {
       console.log("not equal");
       return res.status(401).json({ "error": "INCORRECT_PASSWORD" });
@@ -229,26 +198,21 @@ app.post('/sign-up', async function (req, res) {
 })
 
 app.get('/logout', logoutHandler = (req, res) => {
-  if(welcomeHandler(req,res) =='no-user')
-    res.sendFile(path.join(__dirname + '/pages/register.html'));
-  else
-    res.sendFile(path.join(__dirname + '/pages/stock.html'));
-  //   if (!req.cookies) {
-  //     res.redirect('/sign-in')
-  //     return
-  // }
-
-  const sessionToken = req.cookies['session_token']
-  if (!sessionToken) {
+  if(welcomeHandler(req,res) =='no-user'){
+    res.redirect('/sign-up');
+    return
+  }
+  else{
+    const sessionToken = req.cookies['session_token']
+    if (!sessionToken) {
       res.redirect('/sign-in')
       return
+    }else{
+    delete sessions[sessionToken]
+    res.cookie("session_token", "", { expires: new Date() })
+    res.redirect('/sign-in')
+    }
   }
-
-  delete sessions[sessionToken]
-
-  res.cookie("session_token", "", { expires: new Date() })
-  res.end()
-  res.redirect('/sign-in')
 })
 
 
@@ -291,13 +255,16 @@ app.get('/contact-us', function (req, res) {
 })
 
 app.post('/contact-us', function (req, res) {
-  const message = "Hi " + req.body.firstName + " " + req.body.firstName + "\n\nWe have received your inquiry about " + req.body.subject + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"
+  const message = "Hi " + req.body.firstName + " " + req.body.lastName + "\n\nWe have received your inquiry about " + req.body.subject + "/nMessage received is: " + req.body.message + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"
   const subject = "Inquiry Received!"
 
-  if( mailHandler(subject,message,req.body.email) ){
+  if( mailHandler(subject,message,req.body.email) == 'true'){
     res.status(200)
   } 
-  return res.status(500)
+  else{
+    res.status(500)
+  }
+  res.end();
 })
 
 const mailHandler = (subject,message, mailTo) =>{
@@ -308,13 +275,22 @@ const mailHandler = (subject,message, mailTo) =>{
     text: message 
     
   };
-  
-  transport.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return 0;
-    }
-    return 1;
-  });
+  try{
+    transport.sendMail(mailOptions);
+  }catch(err){
+      return 'false';
+  }
+    
+  return 'true';
 }
+
+
+app.get('/cards', function (req, res) {
+  // if(welcomeHandler(req,res) =='no-user')
+  //   res.sendFile(path.join(__dirname + '/pages/register.html'));
+  // else
+    res.sendFile(path.join(__dirname + '/pages/cards.html'));
+})
+
 app.listen(port);
 console.log('Server started! At http://localhost:' + port);

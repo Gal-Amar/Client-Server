@@ -50,6 +50,7 @@ signinForm.addEventListener('submit', (e) => {
       var email = document.getElementById('signinEmail').value.trim();
       var password = document.getElementById('signinPassword').value.trim();
       var checkbox = document.querySelector('#customCheck');
+      var submitResult = document.getElementById('submitMessage');
       var rememberMe
       
       if (checkbox.checked){
@@ -69,7 +70,7 @@ signinForm.addEventListener('submit', (e) => {
              window.location.href = '/';
            },
            error: function(xhr, status, error) {
-              console.error('Server error:', status);
+              submitResult.innerHTML = 'User name of password incorrect'
            }
          });
    }

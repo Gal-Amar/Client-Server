@@ -95,7 +95,6 @@ signupForm.addEventListener('submit', (e) => {
         var email = document.getElementById('signupEmail').value.trim();
         var password = document.getElementById('signupPassword').value.trim();
         var repeatPassword = document.getElementById('signupRepeatPassword').value.trim();
-        console.log("hi")
          $.ajax({
              type: "POST",
              url: "/sign-up",
