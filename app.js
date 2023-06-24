@@ -336,10 +336,11 @@ app.get('/', function (req, res) {
     res.sendFile(path.join(__dirname + '/public/pages/index.html'));
 })
 
-app.use(function(req, res, next) {
-  res.status(404);
-  res.sendFile(path.join(__dirname + '/public/pages/404.html'));
-});
+
+// app.use(function(req, res, next) {
+//   res.status(404);
+//   res.sendFile(path.join(__dirname + '/public/pages/404.html'));
+// });
 
 app.listen(port);
 console.log('Server started! At http://localhost:' + port);
