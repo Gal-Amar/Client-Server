@@ -121,7 +121,7 @@ app.get('/stock', function (req, res) {
     return
   }
 
-  res.sendFile(path.join(__dirname + '/pages/stock.html'));
+  res.sendFile(path.join(__dirname + '/public/pages/stock.html'));
   return validClient
 })
 
@@ -129,7 +129,7 @@ app.get('/stock', function (req, res) {
 
 app.get('/sign-in', function (req, res) {
   if (welcomeHandler(req, res) == 'no-user')
-    res.sendFile(path.join(__dirname + '/pages/login.html'));
+    res.sendFile(path.join(__dirname + '/public/pages/login.html'));
   else
     res.redirect('/')
 })
@@ -160,7 +160,7 @@ app.post('/sign-in', async function (req, res) {
 
 app.get('/sign-up', function (req, res) {
   if (welcomeHandler(req, res) == 'no-user')
-    res.sendFile(path.join(__dirname + '/pages/register.html'));
+    res.sendFile(path.join(__dirname + '/public/pages/register.html'));
   else
     res.redirect('/')
 })
@@ -296,7 +296,7 @@ app.get('/contact-us', function (req, res) {
   if (welcomeHandler(req, res) == 'no-user')
     res.redirect('/sign-in')
   else
-    res.sendFile(path.join(__dirname + '/pages/contact-us.html'));
+    res.sendFile(path.join(__dirname + '/public/pages/contact-us.html'));
 })
 
 app.post('/contact-us', function (req, res) {
@@ -333,12 +333,12 @@ app.get('/', function (req, res) {
   if (welcomeHandler(req, res) == 'no-user')
     res.redirect('/sign-in')
   else
-    res.sendFile(path.join(__dirname + '/pages/index.html'));
+    res.sendFile(path.join(__dirname + '/public/pages/index.html'));
 })
 
 app.use(function(req, res, next) {
   res.status(404);
-  res.sendFile(path.join(__dirname + '/pages/404.html'));
+  res.sendFile(path.join(__dirname + '/public/pages/404.html'));
 });
 
 app.listen(port);
