@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Stock Dashboard - Home</title>
+    <title>Stock Dashboard - Stock Overview</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -92,10 +92,11 @@
                     <form
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small"
-                                placeholder="Search a stock..." aria-label="Search" aria-describedby="basic-addon2">
+                            <input type="text" class="form-control bg-light border-0 small" id="searchInput"
+                                placeholder="Search a stock by symbol..." aria-label="Search"
+                                aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button id="searchDesktop" class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
                             </div>
@@ -117,10 +118,10 @@
                                 <form class="form-inline mr-auto w-100 navbar-search">
                                     <div class="input-group">
                                         <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search a stock..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
+                                            placeholder="Search a stock by symbol..." aria-label="Search"
+                                            aria-describedby="basic-addon2" id="searchInput2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button id="searchMobile" class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
                                         </div>
@@ -135,21 +136,11 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -165,6 +156,12 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Stock Overview</h1>
+                        <a id="favoritesButton" href="#" onclick="toggleFavorite()" class="d-sm-inline-block btn btn-sm btn-success shadow-sm"><i
+                                class="fas fa-star fa-sm text-white-50"></i> Add To Favorites</a>
+                    </div>
+
                     <!-- Content Row -->
                     <div class="row">
 
@@ -174,9 +171,9 @@
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Symbol: TSLA</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">Tesla, Inc.</div>
+                                            <div id="stockSymbol"
+                                                class="text-xs font-weight-bold text-primary text-uppercase mb-1"></div>
+                                            <div id="stockName" class="h6 mb-0 font-weight-bold text-gray-800"></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-info fa-2x text-gray-300"></i>
@@ -194,7 +191,7 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                                 Price</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$244.40</div>
+                                            <div id="stockPrice" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -212,10 +209,11 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Change $</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">+$9.54</div>
+                                            <div id="stockChangeUSD" class="h5 mb-0 font-weight-bold text-gray-800">
+                                            </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-plus fa-2x text-gray-300"></i>
+                                            <i id="stockSign" class="fas fa-plus fa-2x text-gray-300"></i>
                                         </div>
                                     </div>
                                 </div>
@@ -230,7 +228,8 @@
                                         <div class="col mr-2">
                                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                                 Change %</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">+4.06%</div>
+                                            <div id="stockChangePer" class="h5 mb-0 font-weight-bold text-gray-800">
+                                            </div>
                                         </div>
                                         <div class="col-auto">
                                             <i class="fas fa-percentage fa-2x text-gray-300"></i>
@@ -251,13 +250,13 @@
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Chart</h6>
+                                    <h6 class="m-0 font-weight-bold text-primary">Price Chart</h6>
                                 </div>
 
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
+                                        <canvas id="priceChart"></canvas>
                                     </div>
                                 </div>
                             </div>
@@ -304,7 +303,7 @@
                 <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                    <a class="btn btn-primary" href="login.html">Logout</a>
+                    <a class="btn btn-primary" href="/logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -323,8 +322,184 @@
     <!-- Page level plugins -->
     <script src="vendor/chart.js/Chart.min.js"></script>
 
-    <script src="js/demo/chart-area-demo.js"></script>
 
+    <script>
+        function GetURLParameter(sParam) {
+            var sPageURL = window.location.search.substring(1);
+            var sURLVariables = sPageURL.split('&');
+            for (var i = 0; i < sURLVariables.length; i++) {
+                var sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] == sParam) {
+                    return sParameterName[1];
+                }
+            }
+        }
+
+        const stockSymbol = GetURLParameter('symbol');
+        const apiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stockSymbol}&apikey=RD2KTXLLT0Q229Z8`;
+        const apiUrl2 = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${stockSymbol}&apikey=RD2KTXLLT0Q229Z8`;
+
+        $.ajax({
+            url: apiUrl2,
+            type: 'GET',
+            success: function (response) {
+                document.getElementById('stockSymbol').innerText = stockSymbol;
+                document.getElementById('stockName').innerText = response['Name'];
+            },
+            error: function (xhr, status, error) {
+                // Handle the error here
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            success: function (response) {
+                if (/Note/.test(response)) {
+                    // 'Note' found in the response
+                    console.log("Response contains 'Note'");
+                }
+                // Handle the successful response here
+                var apiResponse = response;
+                // Extract close prices from the API response
+                var timeSeries = apiResponse["Time Series (Daily)"];
+                const todayPrice = parseFloat(timeSeries[Object.keys(timeSeries)[0]]["4. close"]);
+                const yesterdayPrice = parseFloat(timeSeries[Object.keys(timeSeries)[1]]["4. close"]);
+                const changePrice = todayPrice - yesterdayPrice;
+                const changePercent = 100 - (yesterdayPrice / todayPrice) * 100;
+
+                document.getElementById('stockPrice').innerText = "$" + todayPrice.toFixed(2);
+                document.getElementById('stockChangeUSD').innerHTML = "$" + changePrice.toFixed(2);
+                document.getElementById('stockChangePer').innerHTML = changePercent.toFixed(2) + "%";
+
+                if (changePrice < 0) {
+                    var divs = document.querySelectorAll('div');
+                    document.getElementById('stockSign').classList.replace('fa-plus', 'fa-minus')
+
+                    divs.forEach(function (div) {
+                        if (div.classList.contains('border-left-success')) {
+                            div.classList.replace('border-left-success', 'border-left-danger');
+                        }
+                        else if (div.classList.contains('text-success')) {
+                            div.classList.replace('text-success', 'text-danger');
+                        }
+                    });
+
+                }
+                const closePrices = Object.values(timeSeries).map(data => parseFloat(data["4. close"]));
+
+                // Create a line chart
+                const ctx = document.getElementById('priceChart').getContext('2d');
+                const lineChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(timeSeries).reverse(),
+                        datasets: [{
+                            label: 'Stock Price',
+                            data: closePrices.reverse(),
+                            backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                            borderColor: 'rgba(0, 123, 255, 1)',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Date'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: 'Price in USD'
+                                }
+                            }
+                        }
+                    }
+                });
+            },
+            error: function (xhr, status, error) {
+                // Handle the error here
+                console.log(error);
+            }
+        });
+
+        $.ajax({
+            url: '/favorites-check/?symbol=' + stockSymbol,
+            type: 'GET',
+            success: function (response) {
+                const exists = response['exists'];
+
+                if (exists) {
+                    const favButton = document.getElementById('favoritesButton');
+                    favButton.classList.replace('btn-success', 'btn-danger');
+                    favButton.innerHTML = '<i class="fas fa-star fa-sm text-white-50"></i> Remove From Favorites';
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        })
+
+        function toggleFavorite() {
+            const name = document.getElementById('stockName').innerText;
+
+            $.ajax({
+                url: '/favorite?symbol=' + stockSymbol + '&name=' + name,
+                type: 'GET',
+                success: function (response) {
+                    let result = response['result'];
+                    const favButton = document.getElementById('favoritesButton');
+
+                    if (result == 'add') {
+                        favButton.classList.replace('btn-success', 'btn-danger');
+                        favButton.innerHTML = '<i class="fas fa-star fa-sm text-white-50"></i> Remove From Favorites';
+                    } else if (result == 'remove') {
+                        favButton.classList.replace('btn-danger', 'btn-success');
+                        favButton.innerHTML = '<i class="fas fa-star fa-sm text-white-50"></i> Add To Favorites';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function handleSearchDesktop() {
+            var keyword = document.getElementById('searchInput').value;
+
+            if (keyword != '')
+                handleSearch(keyword)
+        }
+
+        function handleSearchMobile() {
+            var keyword = document.getElementById('searchInput2').value;
+
+            if (keyword != '')
+                handleSearch(keyword)
+        }
+
+        function handleSearch(keyword) {
+            var url = "/stock?symbol=" + keyword;
+            window.location.href = url;
+        }
+
+        // Add the onclick function to the button
+        var buttonDesktop = document.getElementById('searchDesktop');
+        var buttonMobile = document.getElementById('searchMobile');
+
+        buttonDesktop.onclick = handleSearchDesktop;
+        buttonMobile.onclick = handleSearchMobile;
+    </script>
 </body>
 
 </html>

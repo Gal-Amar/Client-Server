@@ -29,8 +29,8 @@ var transport = nodemailer.createTransport({
   service: 'gmail',
   port: 465,
   auth: {
-    user: "itshak.gal@gmail.com",  
-    pass: "vexwabewnjxksush" 
+    user: "itshak.gal@gmail.com",
+    pass: "vexwabewnjxksush"
   }
 });
 
@@ -56,32 +56,32 @@ const welcomeHandler = (req, res) => {
   // if this request doesn't have any cookies, that means it isn't
   // authenticated. Return an error code.
   if (!req.cookies) {
-      // res.status(401).end()
-      // return
-      //TODO need to log in in order to see something
-      return 'no-user'
+    // res.status(401).end()
+    // return
+    //TODO need to log in in order to see something
+    return 'no-user'
   }
 
   // We can obtain the session token from the requests cookies, which come with every request
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
-      // If the cookie is not set, return an unauthorized status
-      return 'no-user'
+    // If the cookie is not set, return an unauthorized status
+    return 'no-user'
   }
 
   // We then get the session of the user from our session map
   // that we set in the signinHandler
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
-      // // If the session token is not present in session map, return an unauthorized error
-      return 'no-user'
+    // // If the session token is not present in session map, return an unauthorized error
+    return 'no-user'
   }
   // if the session has expired, return an unauthorized error, and delete the 
   // session from our map
   refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
-  
+
   return userSession.username;
 }
 
@@ -91,22 +91,22 @@ const refreshSession = (res, userEmail, rememberMe) => {
 
   // set the expiry time as 120s after the current time
   const now = new Date()
-  var expiresAt 
-  if(rememberMe == "true"){
+  var expiresAt
+  if (rememberMe == "true") {
     expiresAt = new Date(+now + 604800000) // week
-  }else{
+  } else {
     expiresAt = new Date(+now + 120 * 4000) //two minutes 
   }
-  
+
   // create a session containing information about the user and expiry time
-  const session = new Session(userEmail, expiresAt ,rememberMe)
+  const session = new Session(userEmail, expiresAt, rememberMe)
   // add the session information to the sessions map
   sessions[sessionToken] = session
-  
+
   // In the response, set a cookie on the client with the name "session_cookie"
   // and the value as the UUID we generated. We also set the expiry time
   res.cookie("session_token", sessionToken, { expires: expiresAt })
-  
+
 }
 
 app.use(express.static(__dirname));  //specifies the root directory from which to serve static assets [images, CSS files and JavaScript files]
@@ -114,24 +114,24 @@ app.use(bodyParser.urlencoded({ extended: true })); //parsing bodies from URL. e
 app.use(bodyParser.json()); //for parsing json objects
 app.use(cookieParser());
 
-app.get('/', function (req, res) {
+app.get('/stock', function (req, res) {
   const validClient = welcomeHandler(req, res);
-  if( validClient == 'no-user'){
+  if (validClient == 'no-user') {
     res.redirect('/sign-in')
     return
   }
+
   res.sendFile(path.join(__dirname + '/pages/stock.html'));
   return validClient
-  
 })
 
 
 
 app.get('/sign-in', function (req, res) {
-  if(welcomeHandler(req,res) =='no-user')
+  if (welcomeHandler(req, res) == 'no-user')
     res.sendFile(path.join(__dirname + '/pages/login.html'));
   else
-    res.sendFile(path.join(__dirname + '/pages/stock.html'));
+    res.redirect('/')
 })
 
 app.post('/sign-in', async function (req, res) {
@@ -142,7 +142,7 @@ app.post('/sign-in', async function (req, res) {
     await client.connect();
     const query = { email: req.body.email }
     const user = await users.findOne(query);
-    
+
     if (user == null) {
       return res.status(401).json({ "error": "USER_DOES_NOT_EXISTS" });
     }
@@ -150,7 +150,7 @@ app.post('/sign-in', async function (req, res) {
       console.log("not equal");
       return res.status(401).json({ "error": "INCORRECT_PASSWORD" });
     }
-    
+
     refreshSession(res, req.body.email, req.body.rememberMe);
     res.end()
   } finally {
@@ -159,10 +159,10 @@ app.post('/sign-in', async function (req, res) {
 })
 
 app.get('/sign-up', function (req, res) {
-  if(welcomeHandler(req,res) =='no-user')
+  if (welcomeHandler(req, res) == 'no-user')
     res.sendFile(path.join(__dirname + '/pages/register.html'));
   else
-    res.sendFile(path.join(__dirname + '/pages/stock.html'));
+    res.redirect('/')
 })
 
 app.post('/sign-up', async function (req, res) {
@@ -176,7 +176,7 @@ app.post('/sign-up', async function (req, res) {
     var encryptedPassword = bcrypt.hashSync(req.body.password, 10);;
     await client.connect();
     const query = { email: req.body.email }
-    if ( await users.findOne(query) != null) {
+    if (await users.findOne(query) != null) {
       return res.status(401).json({ "error": "USER_ALREADY_EXISTS" });
     }
     console.log(encryptedPassword)
@@ -185,11 +185,11 @@ app.post('/sign-up', async function (req, res) {
       lastName: req.body.lastName,
       email: req.body.email,
       password: encryptedPassword,
-      favorites:  [],
+      favorites: [],
     });
     console.log("accepted")
     const message = "Hi, " + req.body.firstName + " " + req.body.lastName + "\nWelcome to StockDashboard!"
-    mailHandler("Welcome!",message,req.body.email)
+    mailHandler("Welcome!", message, req.body.email)
     refreshSession(res, req.body.email, false);
     res.end()
   } finally {
@@ -198,99 +198,148 @@ app.post('/sign-up', async function (req, res) {
 })
 
 app.get('/logout', logoutHandler = (req, res) => {
-  if(welcomeHandler(req,res) =='no-user'){
+  if (welcomeHandler(req, res) == 'no-user') {
     res.redirect('/sign-up');
     return
   }
-  else{
+  else {
     const sessionToken = req.cookies['session_token']
     if (!sessionToken) {
       res.redirect('/sign-in')
       return
-    }else{
-    delete sessions[sessionToken]
-    res.cookie("session_token", "", { expires: new Date() })
-    res.redirect('/sign-in')
+    } else {
+      delete sessions[sessionToken]
+      res.cookie("session_token", "", { expires: new Date() })
+      res.redirect('/sign-in')
     }
   }
 })
 
-
-app.get('/favorites', favoritesHandler = async (req, res) => {
-  const userName = welcomeHandler(req,res);
-  if(userName == 'no-user'){
-   res.redirect('/sign-in');
-   return
+app.get('/favorites', async function (req, res) {
+  const userName = welcomeHandler(req, res);
+  if (userName == 'no-user') {
+    res.redirect('/sign-in');
+    return
   }
-  const stock = req.query.stock;
 
   try {
     await client.connect();
-    const user = await users.findOne({email: userName, favorites: {$in: [stock]}})
-    if(user == null){
-      console.log('there isnt')
+    const user = await users.findOne({ email: userName })
+    res.json({ 'favorites': user.favorites })
+  } finally {
+    await client.close();
+  }
+})
+
+app.get('/favorite', favoritesHandler = async (req, res) => {
+  const userName = welcomeHandler(req, res);
+  if (userName == 'no-user') {
+    res.redirect('/sign-in');
+    return
+  }
+
+  const symbol = req.query.symbol;
+  const name = req.query.name;
+
+  try {
+    await client.connect();
+    const user = await users.findOne(
+      { email: userName, "favorites.symbol": symbol },
+      { _id: 1 }
+    );
+
+    if (user == null) {
       await users.updateOne(
         { email: userName },
-        { $push: { favorites: stock } });
-    }
-    else{
-      console.log('there is')
+        { $addToSet: { favorites: { symbol: symbol, name: name } } }
+      );
+      res.json({ 'result': 'add' });
+    } else {
       await users.updateOne(
         { email: userName },
-        { $pull: { favorites: stock } } );
+        { $pull: { favorites: { symbol: symbol } } }
+      );
+      res.json({ 'result': 'remove' });
     }
-   
+
     res.end();
-    return;
   } finally {
     await client.close();
   }
 });
 
+app.get('/favorites-check/', async function (req, res) {
+  const userName = welcomeHandler(req, res);
+  if (userName == 'no-user') {
+    res.redirect('/sign-in');
+    return
+  }
+
+  const symbol = req.query.symbol;
+  try {
+    await client.connect();
+    const result = await users.findOne(
+      { email: userName, "favorites.symbol": symbol },
+      { _id: 1 }
+    );
+
+    if (result == null)
+      res.json({ 'exists': false });
+    else
+      res.json({ 'exists': true });
+  } finally {
+    await client.close()
+  }
+})
+
 app.get('/contact-us', function (req, res) {
-  if(welcomeHandler(req,res) =='no-user')
-    res.sendFile(path.join(__dirname + '/pages/login.html'));
+  if (welcomeHandler(req, res) == 'no-user')
+    res.redirect('/sign-in')
   else
     res.sendFile(path.join(__dirname + '/pages/contact-us.html'));
 })
 
 app.post('/contact-us', function (req, res) {
-  const message = "Hi " + req.body.firstName + " " + req.body.lastName + "\n\nWe have received your inquiry about " + req.body.subject + "/nMessage received is: " + req.body.message + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"
+  const message = "Hi " + req.body.firstName + " " + req.body.lastName + "\n\nWe have received your inquiry about " + req.body.subject + "\nMessage received is: " + req.body.message + ".\nYour request will be attended soon.\n\nThank you,\nStock Dashboard"
   const subject = "Inquiry Received!"
 
-  if( mailHandler(subject,message,req.body.email) == 'true'){
+  if (mailHandler(subject, message, req.body.email) == 'true') {
     res.status(200)
-  } 
-  else{
+  }
+  else {
     res.status(500)
   }
   res.end();
 })
 
-const mailHandler = (subject,message, mailTo) =>{
+const mailHandler = (subject, message, mailTo) => {
   var mailOptions = {
     from: 'itshak.gal@gmail.com',
     to: mailTo,
     subject: subject,
-    text: message 
-    
+    text: message
+
   };
-  try{
+  try {
     transport.sendMail(mailOptions);
-  }catch(err){
-      return 'false';
+  } catch (err) {
+    return 'false';
   }
-    
+
   return 'true';
 }
 
-
-app.get('/cards', function (req, res) {
-  // if(welcomeHandler(req,res) =='no-user')
-  //   res.sendFile(path.join(__dirname + '/pages/register.html'));
-  // else
-    res.sendFile(path.join(__dirname + '/pages/cards.html'));
+app.get('/', function (req, res) {
+  if (welcomeHandler(req, res) == 'no-user')
+    res.redirect('/sign-in')
+  else
+    res.sendFile(path.join(__dirname + '/pages/index.html'));
 })
+
+app.use(function(req, res, next) {
+  res.status(404);
+  res.sendFile(path.join(__dirname + '/pages/404.html'));
+});
 
 app.listen(port);
 console.log('Server started! At http://localhost:' + port);

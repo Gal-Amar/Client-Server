@@ -93,17 +93,11 @@
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" id="searchInput"
-                                placeholder="Search a stock..." aria-label="Search" aria-describedby="basic-addon2">
+                                placeholder="Search a stock by symbol..." aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-primary" type="button">
+                                <button id="searchDesktop" class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
                                 </button>
-                            </div>
-                        </div>
-                        <!-- Use Bootstrap's dropdown component for the autocomplete list -->
-                        <div class="dropdown" id="autocompleteContainer">
-                            <div class="dropdown-menu" aria-labelledby="searchInput" id="autocompleteList">
-                                <!-- Suggestions will be dynamically added here -->
                             </div>
                         </div>
                     </form>
@@ -123,18 +117,12 @@
                                 <form class="form-inline mr-auto w-100 navbar-search">
                                     <div class="input-group">
                                         <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search a stock..." aria-label="Search"
+                                            placeholder="Search a stock by symbol..." aria-label="Search"
                                             aria-describedby="basic-addon2" id="searchInput2">
                                         <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
+                                            <button id="searchMobile" class="btn btn-primary" type="button">
                                                 <i class="fas fa-search fa-sm"></i>
                                             </button>
-                                        </div>
-                                    </div>
-                                    <!-- Use Bootstrap's dropdown component for the autocomplete list -->
-                                    <div class="dropdown" id="autocompleteContainer">
-                                        <div class="dropdown-menu" aria-labelledby="searchInput2" id="autocompleteList">
-                                            <!-- Suggestions will be dynamically added here -->
                                         </div>
                                     </div>
                                 </form>
@@ -147,21 +135,11 @@
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
                                 <img class="img-profile rounded-circle" src="img/undraw_profile.svg">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Settings
-                                </a>
-                                <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
@@ -191,18 +169,18 @@
                                                 <label class="small mb-1" for="inputFirstName">First name *</label>
                                                 <input class="form-control" id="inputFirstName" type="text"
                                                     placeholder="Enter your first name">
-                                                    <div id="contactUsFirstNameError" class="text-left text-danger">
+                                                <div id="contactUsFirstNameError" class="text-left text-danger">
 
-                                                    </div>
+                                                </div>
                                             </div>
                                             <!-- Form Group (last name)-->
                                             <div class="col-md-6">
                                                 <label class="small mb-1" for="inputLastName">Last name *</label>
                                                 <input class="form-control" id="inputLastName" type="text"
                                                     placeholder="Enter your last name">
-                                                  <div id="contactUsLastNameError" class="text-left text-danger">
+                                                <div id="contactUsLastNameError" class="text-left text-danger">
 
-                                                  </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <!-- Form Group (email address)-->
@@ -210,9 +188,9 @@
                                             <label class="small mb-1" for="inputEmailAddress">Email address *</label>
                                             <input class="form-control" id="inputEmailAddress" type="email"
                                                 placeholder="Enter your email address">
-                                                <div id="contactUsEmailError" class="text-left text-danger">
+                                            <div id="contactUsEmailError" class="text-left text-danger">
 
-                                                </div>
+                                            </div>
                                         </div>
                                         <!-- Form Group (Subject)-->
                                         <div class="mb-3">
@@ -231,16 +209,17 @@
                                         <div class="mb-3">
                                             <label class="small mb-1" for="inputMessage">Message *</label>
                                             <textarea class="lh-base form-control" type="text"
-                                                placeholder="Enter your message..." rows="4" id="inputMessage"></textarea>
+                                                placeholder="Enter your message..." rows="4"
+                                                id="inputMessage"></textarea>
                                             <div id="contactUsMessageError" class="text-left text-danger">
 
                                             </div>
                                         </div>
                                         <div>
-                                          <!-- Submit button-->
-                                          <button type="submit" class="btn btn-primary w-100">Submit</button>
-                                          <div id="submitMessage" class="text-left ">
-                                          </div>
+                                            <!-- Submit button-->
+                                            <button type="submit" class="btn btn-primary w-100">Submit</button>
+                                            <div id="submitMessage" class="text-left ">
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -304,79 +283,35 @@
     <!-- Custom scripts for all pages-->
     <script src="js/sb-admin-2.js"></script>
 
-    <!-- Page level plugins -->
-    <script src="vendor/chart.js/Chart.min.js"></script>
-
-    <script src="js/demo/chart-area-demo.js"></script>
+    <script type="text/javascript" src="/js/contact-us.js"></script>
 
     <script>
-        $(document).ready(function () {
-            const searchInput = $('#searchInput');
-            const searchInput2 = $('#searchInput2');
+        function handleSearchDesktop() {
+            var keyword = document.getElementById('searchInput').value;
 
-            // Event listener for user input
-            searchInput.on('input', handleInput);
-            searchInput2.on('input', handleInput);
+            if (keyword != '')
+                handleSearch(keyword)
+        }
 
-            // Handle user input
-            function handleInput() {
-                const keyword = searchInput.val();
-                if (keyword.length > 2) {
-                    fetchSuggestions(keyword);
-                } else {
-                    // Clear the autocomplete list if the input is empty
-                    $('#autocompleteList').empty();
-                    $('#autocompleteList').dropdown('dispose');
-                }
-            }
+        function handleSearchMobile() {
+            var keyword = document.getElementById('searchInput2').value;
 
-            // Fetch autocomplete suggestions from the API
-            function fetchSuggestions(keyword) {
-                const apiUrl = `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${keyword}&apikey=RD2KTXLLT0Q229Z8`;
-                $.ajax({
-                    url: apiUrl,
-                    method: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        //console.log(data.bestMatches);
-                        displaySuggestions(data.bestMatches);
-                    },
-                    error: function (error) {
-                        console.error('Error:', error);
-                    }
-                });
-            }
+            if (keyword != '')
+                handleSearch(keyword)
+        }
 
-            // Display autocomplete suggestions
-            function displaySuggestions(suggestions) {
-                const autocompleteList = $('#autocompleteList');
-                autocompleteList.empty();
+        function handleSearch(keyword) {
+            var url = "/stock?symbol=" + keyword;
+            window.location.href = url;
+        }
 
-                suggestions.forEach(suggestion => {
-                    const symbol = suggestion["1. symbol"];
-                    var name = suggestion["2. name"];
-                    const region = suggestion["4. region"];
+        // Add the onclick function to the button
+        var buttonDesktop = document.getElementById('searchDesktop');
+        var buttonMobile = document.getElementById('searchMobile');
 
-                    if (name.length > 30)
-                        name = name.substring(0, 30) + "...";
-
-                    if (region != "United States")
-                        return;
-
-                    const listItem = $('<a>').addClass('dropdown-item').html(name + " <b>SYM: " + symbol + "</b>");
-                    listItem.on('click', function () {
-                        searchInput.val(symbol);
-                        autocompleteList.empty();
-                        autocompleteList.dropdown('toggle');
-                    });
-                    autocompleteList.append(listItem);
-                });
-
-                autocompleteList.dropdown('toggle');
-            }
-        });
+        buttonDesktop.onclick = handleSearchDesktop;
+        buttonMobile.onclick = handleSearchMobile;
     </script>
-    <script type="text/javascript" src="/js/contact-us.js"></script>
 
 </body>
 

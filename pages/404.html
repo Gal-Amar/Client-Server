@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Stock Dashboard - Home</title>
+    <title>Stock Dashboard - 404</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -93,8 +93,7 @@
                         class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                         <div class="input-group">
                             <input type="text" class="form-control bg-light border-0 small" id="searchInput"
-                                placeholder="Search a stock by symbol..." aria-label="Search"
-                                aria-describedby="basic-addon2">
+                                placeholder="Search a stock by symbol..." aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
                                 <button id="searchDesktop" class="btn btn-primary" type="button">
                                     <i class="fas fa-search fa-sm"></i>
@@ -154,19 +153,16 @@
                 <!-- End of Topbar -->
 
                 <!-- Begin Page Content -->
-                <div class="container-xl px-4 mt-4">
+                <div class="container-fluid">
 
-                    <div class="row">
-                        <div class="col-xl-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    Your Favorite Stocks
-                                </div>
-                                <div class="list-group">
-                                </div>
-                            </div>
-                        </div>
+                    <!-- 404 Error Text -->
+                    <div class="text-center">
+                        <div class="error mx-auto" data-text="404">404</div>
+                        <p class="lead text-gray-800 mb-5">Page Not Found</p>
+                        <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
+                        <a href="/">&larr; Back to Dashboard</a>
                     </div>
+
                 </div>
                 <!-- /.container-fluid -->
 
@@ -252,30 +248,6 @@
         buttonMobile.onclick = handleSearchMobile;
     </script>
 
-    <script>
-        $.ajax({
-            type: "GET",
-            url: "/favorites",
-            success: function (res) {
-                var listGroup = $(".list-group");
-
-                // Loop through each item in the 'favorites' array of the API response
-                res.favorites.forEach(function (favorite) {
-                    // Create a new list item element
-                    var listItem = $("<a>").attr({
-                        href: "/stock?symbol=" + favorite.symbol,
-                        class: "list-group-item list-group-item-action"
-                    }).text(favorite.name);
-
-                    // Append the new list item to the list group
-                    listGroup.append(listItem);
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
-    </script>
 </body>
 
 </html>
