@@ -50,43 +50,33 @@ class Session {
 }
 
 // this object stores the users sessions. For larger scale applications, you can use a database or cache for this purpose
-const sessions = {}
+var sessions = {}
 
-const welcomeHandler = (req, res) => {
+const welcomeHandler = (req, res, next) => {
   // if this request doesn't have any cookies, that means it isn't
   // authenticated. Return an error code.
   if (!req.cookies) {
-    // res.status(401).end()
-    // return
-    //TODO need to log in in order to see something
-    console.log('here 1')
-    return 'no-user'
+    return res.redirect('/sign-in');
   }
 
   // We can obtain the session token from the requests cookies, which come with every request
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
-    // If the cookie is not set, return an unauthorized status
-    console.log('here 2')
-    return 'no-user'
+    return res.redirect('/sign-in');
   }
 
   // We then get the session of the user from our session map
   // that we set in the signinHandler
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
-    // // If the session token is not present in session map, return an unauthorized error
-    console.log('here 3')
-    return 'no-user'
+    return res.redirect('/sign-in')
   }
-  // if the session has expired, return an unauthorized error, and delete the 
-  // session from our map
-  console.log('here 4')
+
   refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
 
-  return userSession.username;
+  next();
 }
 
 const refreshSession = (res, userEmail, rememberMe) => {
@@ -109,7 +99,6 @@ const refreshSession = (res, userEmail, rememberMe) => {
 
   // In the response, set a cookie on the client with the name "session_cookie"
   // and the value as the UUID we generated. We also set the expiry time
-  console.log('here 5')
   res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
 
 }
@@ -133,10 +122,7 @@ app.get('/stock', function (req, res) {
 
 
 app.get('/sign-in', function (req, res) {
-  if (welcomeHandler(req, res) == 'no-user')
     res.sendFile(path.join(__dirname + '/public/pages/login.html'));
-  else
-    res.redirect('/')
 })
 
 app.post('/sign-in', async function (req, res) {
@@ -334,10 +320,7 @@ const mailHandler = (subject, message, mailTo) => {
   return 'true';
 }
 
-app.get('/', function (req, res) {
-  if (welcomeHandler(req, res) == 'no-user')
-    res.redirect('/sign-in')
-  else
+app.get('/', welcomeHandler, function (req, res) {
     res.sendFile(path.join(__dirname + '/public/pages/index.html'));
 })
 
