@@ -52,31 +52,37 @@ class Session {
 // this object stores the users sessions. For larger scale applications, you can use a database or cache for this purpose
 var sessions = {}
 
-const welcomeHandler = (req, res, next) => {
+const welcomeHandler = (req, res) => {
   // if this request doesn't have any cookies, that means it isn't
   // authenticated. Return an error code.
   if (!req.cookies) {
-    return res.redirect('/sign-in');
+    // res.status(401).end()
+    // return
+    //TODO need to log in in order to see something
+    return 'no-user'
   }
 
   // We can obtain the session token from the requests cookies, which come with every request
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
-    return res.redirect('/sign-in');
+    // If the cookie is not set, return an unauthorized status
+    return 'no-user'
   }
 
   // We then get the session of the user from our session map
   // that we set in the signinHandler
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
-    return res.redirect('/sign-in')
+    // // If the session token is not present in session map, return an unauthorized error
+    return 'no-user'
   }
-
+  // if the session has expired, return an unauthorized error, and delete the 
+  // session from our map
   refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
 
-  next();
+  return userSession.username;
 }
 
 const refreshSession = (res, userEmail, rememberMe) => {
@@ -122,7 +128,10 @@ app.get('/stock', function (req, res) {
 
 
 app.get('/sign-in', function (req, res) {
+  if (welcomeHandler(req, res) == 'no-user')
     res.sendFile(path.join(__dirname + '/public/pages/login.html'));
+  else
+    res.redirect('/')
 })
 
 app.post('/sign-in', async function (req, res) {
@@ -320,7 +329,10 @@ const mailHandler = (subject, message, mailTo) => {
   return 'true';
 }
 
-app.get('/', welcomeHandler, function (req, res) {
+app.get('/', function (req, res) {
+  if (welcomeHandler(req, res) == 'no-user')
+    res.redirect('/sign-in')
+  else
     res.sendFile(path.join(__dirname + '/public/pages/index.html'));
 })
 
