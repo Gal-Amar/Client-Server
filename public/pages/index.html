@@ -253,27 +253,29 @@
     </script>
 
     <script>
-        $.ajax({
-            type: "GET",
-            url: "/favorites",
-            success: function (res) {
-                var listGroup = $(".list-group");
-
-                // Loop through each item in the 'favorites' array of the API response
-                res.favorites.forEach(function (favorite) {
-                    // Create a new list item element
-                    var listItem = $("<a>").attr({
-                        href: "/stock?symbol=" + favorite.symbol,
-                        class: "list-group-item list-group-item-action"
-                    }).text(favorite.name);
-
-                    // Append the new list item to the list group
-                    listGroup.append(listItem);
-                });
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
+        $( document ).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "/favorites",
+                success: function (res) {
+                    var listGroup = $(".list-group");
+    
+                    // Loop through each item in the 'favorites' array of the API response
+                    res.favorites.forEach(function (favorite) {
+                        // Create a new list item element
+                        var listItem = $("<a>").attr({
+                            href: "/stock?symbol=" + favorite.symbol,
+                            class: "list-group-item list-group-item-action"
+                        }).text(favorite.name);
+    
+                        // Append the new list item to the list group
+                        listGroup.append(listItem);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
         });
     </script>
 </body>
