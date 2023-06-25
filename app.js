@@ -59,6 +59,7 @@ const welcomeHandler = (req, res) => {
     // res.status(401).end()
     // return
     //TODO need to log in in order to see something
+    console.log('here 1')
     return 'no-user'
   }
 
@@ -66,6 +67,7 @@ const welcomeHandler = (req, res) => {
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
     // If the cookie is not set, return an unauthorized status
+    console.log('here 2')
     return 'no-user'
   }
 
@@ -74,10 +76,12 @@ const welcomeHandler = (req, res) => {
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
     // // If the session token is not present in session map, return an unauthorized error
+    console.log('here 3')
     return 'no-user'
   }
   // if the session has expired, return an unauthorized error, and delete the 
   // session from our map
+  console.log('here 4')
   refreshSession(res, userSession.username, userSession.rememberMe);
   delete sessions[sessionToken]
   // If all checks have passed, we can consider the user authenticated and
@@ -105,6 +109,7 @@ const refreshSession = (res, userEmail, rememberMe) => {
 
   // In the response, set a cookie on the client with the name "session_cookie"
   // and the value as the UUID we generated. We also set the expiry time
+  console.log('here 5')
   res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
 
 }
