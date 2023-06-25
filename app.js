@@ -105,7 +105,7 @@ const refreshSession = (res, userEmail, rememberMe) => {
 
   // In the response, set a cookie on the client with the name "session_cookie"
   // and the value as the UUID we generated. We also set the expiry time
-  res.cookie("session_token", sessionToken, { expires: expiresAt })
+  res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
 
 }
 
