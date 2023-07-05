@@ -66,7 +66,8 @@ const welcomeHandler = (req, res) => {
 
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
-    console.log(typeof sessionToken, sessionToken)
+    console.log(typeof sessionToken, userSession)
+    console.log(sessions)
     return 'no-user'
   }
 
