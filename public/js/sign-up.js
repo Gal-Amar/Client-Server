@@ -91,7 +91,7 @@ signupForm.addEventListener('submit', (e) => {
     if (validateSignUp()) {
         // Get input values
         var firstName = document.getElementById('signupFirstName').value.trim().toLowerCase();
-        var lastName = document.getElementById('signupLastName').value.trim.toLowerCase();
+        var lastName = document.getElementById('signupLastName').value.trim().toLowerCase();
         var email = document.getElementById('signupEmail').value.trim().toLowerCase();
         var password = document.getElementById('signupPassword').value.trim();
         var repeatPassword = document.getElementById('signupRepeatPassword').value.trim();
