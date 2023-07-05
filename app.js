@@ -49,46 +49,28 @@ class Session {
   }
 }
 
-// this object stores the users sessions. For larger scale applications, you can use a database or cache for this purpose
-var sessions = {}
-
 const welcomeHandler = (req, res) => {
-  if (!req.cookies) {
-    console.log('fail 1')
+  if (!req.cookies || !req.cookies['session_token'])
     return 'no-user'
-  }
 
-  const sessionToken = req.cookies['session_token']
-  if (!sessionToken) {
-    console.log('fail 2')
+  const cookie = req.cookies['session_token']
+
+  if (new Date(cookie.expires) <= new Date())
     return 'no-user'
-  }
-
-  userSession = sessions[sessionToken]
-  if (!userSession || userSession.isExpired()) {
-    console.log(typeof sessionToken, userSession)
-    console.log(sessions)
-    return 'no-user'
-  }
-
-  console.log('sucess')
+  
   return userSession.username;
 }
 
 const refreshSession = (res, userEmail, rememberMe) => {
-  const sessionToken = uuid.v4()
-
-  const now = new Date()
+  const sessionToken = userEmail
+  const now = new Date()  
   var expiresAt
-  if (rememberMe == "true") {
-    expiresAt = new Date(+now + 604800000) // week
-  } else {
-    expiresAt = new Date(+now + 10800 * 4000) // 3 hours
-  }
 
-  const session = new Session(userEmail, expiresAt, rememberMe)
-  sessions[sessionToken] = session
-  console.log('sessions: ' + sessions)
+  if (rememberMe == "true")
+    expiresAt = new Date(+now + 604800000) // week
+  else
+    expiresAt = new Date(+now + 10800 * 4000) // 3 hours
+
   res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
 }
 
@@ -130,7 +112,6 @@ app.post('/sign-in', async function (req, res) {
       return res.status(401).json({ "error": "USER_DOES_NOT_EXISTS" });
     }
     if (!bcrypt.compareSync(req.body.password, user.password)) {
-      console.log("not equal");
       return res.status(401).json({ "error": "INCORRECT_PASSWORD" });
     }
 
@@ -162,7 +143,6 @@ app.post('/sign-up', async function (req, res) {
     if (await users.findOne(query) != null) {
       return res.status(401).json({ "error": "USER_ALREADY_EXISTS" });
     }
-    console.log(encryptedPassword)
     const user = await users.insertOne({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -170,7 +150,6 @@ app.post('/sign-up', async function (req, res) {
       password: encryptedPassword,
       favorites: [],
     });
-    console.log("accepted")
     const message = "Hi, " + req.body.firstName + " " + req.body.lastName + "\nWelcome to StockDashboard!"
     mailHandler("Welcome!", message, req.body.email)
     refreshSession(res, req.body.email, false);
