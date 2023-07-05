@@ -53,60 +53,37 @@ class Session {
 var sessions = {}
 
 const welcomeHandler = (req, res) => {
-  // if this request doesn't have any cookies, that means it isn't
-  // authenticated. Return an error code.
   if (!req.cookies) {
-    // res.status(401).end()
-    // return
-    //TODO need to log in in order to see something
     return 'no-user'
   }
 
-  // We can obtain the session token from the requests cookies, which come with every request
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
-    // If the cookie is not set, return an unauthorized status
     return 'no-user'
   }
 
-  // We then get the session of the user from our session map
-  // that we set in the signinHandler
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
-    // // If the session token is not present in session map, return an unauthorized error
     return 'no-user'
   }
-  // if the session has expired, return an unauthorized error, and delete the 
-  // session from our map
-  refreshSession(res, userSession.username, userSession.rememberMe);
-  delete sessions[sessionToken]
-  // If all checks have passed, we can consider the user authenticated and
 
   return userSession.username;
 }
 
 const refreshSession = (res, userEmail, rememberMe) => {
-  // generate a random UUID as the session token
   const sessionToken = uuid.v4()
 
-  // set the expiry time as 120s after the current time
   const now = new Date()
   var expiresAt
   if (rememberMe == "true") {
     expiresAt = new Date(+now + 604800000) // week
   } else {
-    expiresAt = new Date(+now + 120 * 4000) //two minutes 
+    expiresAt = new Date(+now + 10800 * 4000) // 3 hours
   }
 
-  // create a session containing information about the user and expiry time
   const session = new Session(userEmail, expiresAt, rememberMe)
-  // add the session information to the sessions map
   sessions[sessionToken] = session
-
-  // In the response, set a cookie on the client with the name "session_cookie"
-  // and the value as the UUID we generated. We also set the expiry time
   res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
-
 }
 
 app.use(express.static(__dirname + '/public'));  //specifies the root directory from which to serve static assets [images, CSS files and JavaScript files]
@@ -199,7 +176,7 @@ app.post('/sign-up', async function (req, res) {
 
 app.get('/logout', logoutHandler = (req, res) => {
   if (welcomeHandler(req, res) == 'no-user') {
-    res.redirect('/sign-up');
+    res.redirect('/sign-in');
     return
   }
   else {
