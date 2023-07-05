@@ -3,11 +3,9 @@ var path = require('path');
 var bodyParser = require('body-parser') //parse request parameters
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const bcrypt = require('bcrypt');
-const uri = "mongodb+srv://itshakgal:itshakgal2023@stockdash.fvzw1ma.mongodb.net/";
+//const uri = "mongodb+srv://itshakgal:itshakgal2023@stockdash.fvzw1ma.mongodb.net/";
 const cookieParser = require('cookie-parser')
-const uuid = require('uuid')
 const nodemailer = require("nodemailer");
-
 
 var app = express();
 var port = 3000;
@@ -33,21 +31,6 @@ var transport = nodemailer.createTransport({
     pass: "vexwabewnjxksush"
   }
 });
-
-
-// each session contains the username of the user and the time at which it expires
-class Session {
-  constructor(username, expiresAt, rememberMe) {
-    this.username = username
-    this.expiresAt = expiresAt
-    this.rememberMe = rememberMe
-  }
-
-  // we'll use this method later to determine if the session has expired
-  isExpired() {
-    return this.expiresAt < (new Date())
-  }
-}
 
 const welcomeHandler = (req, res) => {
   if (!req.cookies || !req.cookies['session_token'])
@@ -79,18 +62,12 @@ app.use(bodyParser.urlencoded({ extended: true })); //parsing bodies from URL. e
 app.use(bodyParser.json()); //for parsing json objects
 app.use(cookieParser());
 
-app.get('/stock', function (req, res) {
-  const validClient = welcomeHandler(req, res);
-  if (validClient == 'no-user') {
+app.get('/', function (req, res) {
+  if (welcomeHandler(req, res) == 'no-user')
     res.redirect('/sign-in')
-    return
-  }
-
-  res.sendFile(path.join(__dirname + '/public/pages/stock.html'));
-  return validClient
+  else
+    res.sendFile(path.join(__dirname + '/public/pages/index.html'));
 })
-
-
 
 app.get('/sign-in', function (req, res) {
   if (welcomeHandler(req, res) == 'no-user')
@@ -170,11 +147,21 @@ app.get('/logout', logoutHandler = (req, res) => {
       res.redirect('/sign-in')
       return
     } else {
-      delete sessions[sessionToken]
       res.cookie("session_token", "", { expires: new Date() })
       res.redirect('/sign-in')
     }
   }
+})
+
+app.get('/stock', function (req, res) {
+  const validClient = welcomeHandler(req, res);
+  if (validClient == 'no-user') {
+    res.redirect('/sign-in')
+    return
+  }
+
+  res.sendFile(path.join(__dirname + '/public/pages/stock.html'));
+  return validClient
 })
 
 app.get('/favorites', async function (req, res) {
@@ -291,18 +278,10 @@ const mailHandler = (subject, message, mailTo) => {
   return 'true';
 }
 
-app.get('/', function (req, res) {
-  if (welcomeHandler(req, res) == 'no-user')
-    res.redirect('/sign-in')
-  else
-    res.sendFile(path.join(__dirname + '/public/pages/index.html'));
-})
-
-
-// app.use(function(req, res, next) {
-//   res.status(404);
-//   res.sendFile(path.join(__dirname + '/public/pages/404.html'));
-// });
+app.use(function(req, res, next) {
+  res.status(404);
+  res.sendFile(path.join(__dirname + '/public/pages/404.html'));
+});
 
 app.listen(port);
 console.log('Server started! At http://localhost:' + port);
