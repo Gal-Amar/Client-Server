@@ -336,7 +336,7 @@
         }
 
         const stockSymbol = GetURLParameter('symbol');
-        const apiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stockSymbol}&apikey=RD2KTXLLT0Q229Z8`;
+        const apiUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${stockSymbol}&apikey=RD2KTXLLT0Q229Z8`;
         const apiUrl2 = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${stockSymbol}&apikey=RD2KTXLLT0Q229Z8`;
 
         $.ajax({
@@ -357,8 +357,8 @@
             type: 'GET',
             success: function (response) {
                 if (/Note/.test(response)) {
-                    // 'Note' found in the response
-                    console.log("Response contains 'Note'");
+                    document.getElementById('priceChart').innerHTML = 'Cannot make more API calls to AlphaVantage API because limit reached. Please try again later.'
+                    return
                 }
                 // Handle the successful response here
                 var apiResponse = response;
