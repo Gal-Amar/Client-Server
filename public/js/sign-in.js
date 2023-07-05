@@ -1,6 +1,6 @@
 function validateSignIn() {
    // Get input values
-   var email = document.getElementById('signinEmail').value.trim().toLowerCase();
+   var email = document.getElementById('signinEmail').value.trim();
    var password = document.getElementById('signinPassword').value.trim();
    
 
@@ -47,7 +47,7 @@ signinForm.addEventListener('submit', (e) => {
 
    if (validateSignIn()) {
       // Get input values
-      var email = document.getElementById('signinEmail').value.trim();
+      var email = document.getElementById('signinEmail').value.trim().toLowerCase();
       var password = document.getElementById('signinPassword').value.trim();
       var checkbox = document.querySelector('#customCheck');
       var submitResult = document.getElementById('submitMessage');
