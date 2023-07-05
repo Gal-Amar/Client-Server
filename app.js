@@ -54,19 +54,23 @@ var sessions = {}
 
 const welcomeHandler = (req, res) => {
   if (!req.cookies) {
+    console.log('fail 1')
     return 'no-user'
   }
 
   const sessionToken = req.cookies['session_token']
   if (!sessionToken) {
+    console.log('fail 2')
     return 'no-user'
   }
 
   userSession = sessions[sessionToken]
   if (!userSession || userSession.isExpired()) {
+    console.log('fail 3')
     return 'no-user'
   }
 
+  console.log('sucess')
   return userSession.username;
 }
 
