@@ -1,7 +1,7 @@
 function validateSignIn() {
    // Get input values
    var email = document.getElementById('signinEmail').value.trim().toLowerCase();
-   var password = document.getElementById('signinPassword').value.trim().toLowerCase();
+   var password = document.getElementById('signinPassword').value.trim();
    
 
    // Regular expressions for validation
