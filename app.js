@@ -88,6 +88,7 @@ const refreshSession = (res, userEmail, rememberMe) => {
 
   const session = new Session(userEmail, expiresAt, rememberMe)
   sessions[sessionToken] = session
+  console.log('sessions: ' + sessions)
   res.cookie("session_token", sessionToken, { expires: expiresAt, secure: true, sameSite: 'lax' })
 }
 
