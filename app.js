@@ -58,7 +58,7 @@ const welcomeHandler = (req, res) => {
   if (new Date(cookie.expires) <= new Date())
     return 'no-user'
   
-  return userSession.username;
+  return cookie;
 }
 
 const refreshSession = (res, userEmail, rememberMe) => {
