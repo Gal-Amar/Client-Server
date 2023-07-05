@@ -77,7 +77,6 @@ function validateSignUp() {
         passwordError.innerHTML = '';
         passwordValid = true;
     }
-    console.log(firstNameValid && lastNameValid && emailValid && passwordValid && repeatPasswordValid)
 
     // If all inputs are valid
     return firstNameValid && lastNameValid && emailValid && passwordValid && repeatPasswordValid;
